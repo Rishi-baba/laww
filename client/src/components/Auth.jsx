@@ -1,15 +1,86 @@
 import React, { useState } from "react";
+import api from "../api/axios";
 
-const Auth = () => {
+const Auth = ({ setShowLogin }) => {
   const [isRegistering, setIsRegistering] = useState(false);
+
+  // LOGIN STATES
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // REGISTER STATES
+  const [name, setName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  // LOGIN
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+      });
+
+      console.log(response.data);
+
+    } catch (error) {
+      console.log(error);
+
+      if (error.response) {
+        console.log(error.response.data);
+      } else {
+        console.log("Server not responding");
+      }
+    }
+  };
+
+  // REGISTER
+  const handleRegister = async (e) => {
+    e.preventDefault();
+
+    if (registerPassword !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      const response = await api.post("/auth/register", {
+        name,
+        email: registerEmail,
+        password: registerPassword,
+      });
+
+      console.log(response.data);
+
+    } catch (error) {
+      console.log(error);
+
+      if (error.response) {
+        console.log(error.response.data);
+      } else {
+        console.log("Server not responding");
+      }
+    }
+  };
 
   return (
     <>
-      <div className="login-card justify-center inset-0 z-50">
+      <div className="pointer-events-auto login-card justify-center inset-0 z-50">
 
         {/* LOGIN CARD */}
         {!isRegistering && (
           <div className="rounded-xl border mt-20 ml-20 w-lg border-[#c5a059]/10 bg-gradient-to-b from-[#0b0b0b] to-[#040404] transition-all duration-500 flex flex-col hover:border-[#c5a059]/40 hover:-translate-y-1.5 hover:shadow-[0_15px_35px_rgba(0,0,0,0.85)]">
+
+            <button
+              type="button"
+              onClick={() => setShowLogin(false)}
+              className="absolute top-7 left-5 text-gray-500 hover:text-[#c5a059] transition-all text-xs uppercase tracking-[0.2em] font-mono cursor-pointer"
+            >
+              ← Go Back
+            </button>
 
             <h2 className="text-2xl font-serif font-bold text-center text-white mt-10 mb-3 tracking-wide">
               Lawra Login
@@ -19,8 +90,10 @@ const Auth = () => {
               Welcome back! Please enter your credentials to access your account.
             </p>
 
-            <form className="flex mt-5 h-full flex-col gap-6">
-
+            <form
+              onSubmit={handleLogin}
+              className="flex mt-5 h-full flex-col gap-6"
+            >
               <div className="flex flex-col h-full gap-4 px-10">
 
                 {/* EMAIL */}
@@ -32,6 +105,8 @@ const Auth = () => {
                   <input
                     type="email"
                     placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-black border border-zinc-800 text-white text-xs font-serif tracking-normal p-3 rounded focus:outline-none focus:border-[#c5a059] transition-all placeholder:text-gray-700 font-light"
                   />
                 </div>
@@ -45,19 +120,10 @@ const Auth = () => {
                   <input
                     type="password"
                     placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full bg-black border border-zinc-800 text-white text-xs font-serif tracking-normal p-3 rounded focus:outline-none focus:border-[#c5a059] transition-all placeholder:text-gray-700 font-light"
                   />
-                </div>
-
-                {/* REMEMBER / FORGOT */}
-                <div className="flex items-center justify-between">
-                  <span className="font-light text-xs text-gray-400">
-                    Remember me
-                  </span>
-
-                  <span className="font-light text-xs text-gray-400 cursor-pointer hover:text-white transition-all">
-                    Forgot password?
-                  </span>
                 </div>
 
                 {/* BUTTON */}
@@ -92,69 +158,59 @@ const Auth = () => {
         {isRegistering && (
           <div className="rounded-xl border mt-20 ml-20 w-lg border-[#c5a059]/10 bg-gradient-to-b from-[#0b0b0b] to-[#040404] transition-all duration-500 flex flex-col hover:border-[#c5a059]/40 hover:-translate-y-1.5 hover:shadow-[0_15px_35px_rgba(0,0,0,0.85)]">
 
+            <button
+              type="button"
+              onClick={() => setShowLogin(false)}
+              className="absolute top-7 left-5 text-gray-500 hover:text-[#c5a059] transition-all text-xs uppercase tracking-[0.2em] font-mono cursor-pointer"
+            >
+              ← Go Back
+            </button>
+
             <h2 className="text-2xl font-serif font-bold text-center text-white mt-10 mb-3 tracking-wide">
               Create Account
             </h2>
 
-            <p className="text-center text-gray-500 text-xs font-light mb-2 px-20">
-              Create your account to access AI-powered legal intelligence.
-            </p>
-
-            <form className="flex mt-5 h-full flex-col gap-6">
-
+            <form
+              onSubmit={handleRegister}
+              className="flex mt-5 h-full flex-col gap-6"
+            >
               <div className="flex flex-col h-full gap-4 px-10">
 
                 {/* NAME */}
-                <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1.5 font-semibold">
-                    Full Name
-                  </label>
-
-                  <input
-                    type="text"
-                    placeholder="Enter your name"
-                    className="w-full bg-black border border-zinc-800 text-white text-xs font-serif tracking-normal p-3 rounded focus:outline-none focus:border-[#c5a059] transition-all placeholder:text-gray-700 font-light"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="Enter your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full bg-black border border-zinc-800 text-white text-xs p-3 rounded"
+                />
 
                 {/* EMAIL */}
-                <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1.5 font-semibold">
-                    Enter Email
-                  </label>
-
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="w-full bg-black border border-zinc-800 text-white text-xs font-serif tracking-normal p-3 rounded focus:outline-none focus:border-[#c5a059] transition-all placeholder:text-gray-700 font-light"
-                  />
-                </div>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={registerEmail}
+                  onChange={(e) => setRegisterEmail(e.target.value)}
+                  className="w-full bg-black border border-zinc-800 text-white text-xs p-3 rounded"
+                />
 
                 {/* PASSWORD */}
-                <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1.5 font-semibold">
-                    Create Password
-                  </label>
-
-                  <input
-                    type="password"
-                    placeholder="Create password"
-                    className="w-full bg-black border border-zinc-800 text-white text-xs font-serif tracking-normal p-3 rounded focus:outline-none focus:border-[#c5a059] transition-all placeholder:text-gray-700 font-light"
-                  />
-                </div>
+                <input
+                  type="password"
+                  placeholder="Create password"
+                  value={registerPassword}
+                  onChange={(e) => setRegisterPassword(e.target.value)}
+                  className="w-full bg-black border border-zinc-800 text-white text-xs p-3 rounded"
+                />
 
                 {/* CONFIRM PASSWORD */}
-                <div>
-                  <label className="block text-[10px] font-mono uppercase tracking-wider text-gray-500 mb-1.5 font-semibold">
-                    Confirm Password
-                  </label>
-
-                  <input
-                    type="password"
-                    placeholder="Confirm password"
-                    className="w-full bg-black border border-zinc-800 text-white text-xs font-serif tracking-normal p-3 rounded focus:outline-none focus:border-[#c5a059] transition-all placeholder:text-gray-700 font-light"
-                  />
-                </div>
+                <input
+                  type="password"
+                  placeholder="Confirm password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full bg-black border border-zinc-800 text-white text-xs p-3 rounded"
+                />
 
                 {/* BUTTON */}
                 <button
@@ -183,7 +239,6 @@ const Auth = () => {
             </form>
           </div>
         )}
-
       </div>
     </>
   );

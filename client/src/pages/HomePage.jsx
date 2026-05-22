@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import ScrollSequence from "../components/ScrollSequence";
 import CinematicOverlay from "../components/CinematicOverlay";
 import StatueHotspots from "../components/StatueHotspots";
+import Auth from "../components/Auth";
 
 const HomePage = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [showAuth, setShowAuth] = useState(false);
 
   // Smooth scroll tracking to fade out/translate text elements as the user scrolls down
   useEffect(() => {
@@ -37,7 +39,9 @@ const HomePage = () => {
       <CinematicOverlay />
 
       {/* Statue Interactive Pointers Overlay */}
-      <StatueHotspots />
+      {!showAuth && (
+        <StatueHotspots />
+      )}
 
 
       {/* 3. Editorial Front-Facing Hero Content */}
@@ -48,7 +52,8 @@ const HomePage = () => {
           transform: `translateY(${contentTranslateY}px)`,
         }}
       >
-        <div className="max-w-7xl mx-auto w-full px-8 md:px-20 mt-5">
+        {!showAuth && (
+          <div className="max-w-7xl mx-auto w-full px-8 md:px-20 mt-5">
           <div className=" max-w-3xl">
 
 
@@ -195,6 +200,7 @@ const HomePage = () => {
                   pointer-events-auto
                   cursor-pointer
                 "
+                onClick={() => setShowAuth(true)}
               >
                 Get Started
               </button>
@@ -227,6 +233,11 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+        )}
+        {showAuth && (
+          <Auth setShowLogin={setShowAuth} />
+        )}
+        
       </div>
 
       {/* 4. Peripheral HUD Editorial Elements (Movie Poster feel) */}
