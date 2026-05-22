@@ -29,7 +29,7 @@ const HomePage = () => {
 
   return (
     <div className="bg-black min-h-screen text-white overflow-hidden relative">
-      
+
       {/* 1. Dynamic Canvas Background Sequence */}
       <ScrollSequence />
 
@@ -41,7 +41,7 @@ const HomePage = () => {
 
 
       {/* 3. Editorial Front-Facing Hero Content */}
-      <div 
+      <div
         className="fixed inset-0 z-20 flex items-center pointer-events-none transition-all duration-300 ease-out"
         style={{
           opacity: contentOpacity,
@@ -50,7 +50,7 @@ const HomePage = () => {
       >
         <div className="max-w-7xl mx-auto w-full px-8 md:px-20 mt-5">
           <div className=" max-w-3xl">
-            
+
 
             {/* Premium Gold scales + neural network vector SVG & Brand title */}
             <div className="mb-10 flex items-center gap-4">
@@ -74,7 +74,7 @@ const HomePage = () => {
                     d="M50 26C52.2091 26 54 24.2091 54 22C54 19.7909 52.2091 18 50 18C47.7909 18 46 19.7909 46 22C46 24.2091 47.7909 26 50 26Z"
                     fill="currentColor"
                   />
-                  
+
                   {/* Crossbeam */}
                   <path
                     d="M24 35C35 31 65 31 76 35"
@@ -82,7 +82,7 @@ const HomePage = () => {
                     strokeWidth="2.5"
                     strokeLinecap="round"
                   />
-                  
+
                   {/* Outer Neural Weights */}
                   <circle cx="24" cy="35" r="4.5" fill="#000" stroke="currentColor" strokeWidth="2.5" />
                   <circle cx="76" cy="35" r="4.5" fill="#000" stroke="currentColor" strokeWidth="2.5" />
@@ -101,7 +101,7 @@ const HomePage = () => {
                     strokeWidth="1.2"
                     strokeDasharray="3 3"
                   />
-                  
+
                   {/* Right Scale Bowl and Suspensions */}
                   <path
                     d="M68 58C68 58 72 62 76 62C80 62 84 58 84 58"
@@ -115,7 +115,7 @@ const HomePage = () => {
                     strokeWidth="1.2"
                     strokeDasharray="3 3"
                   />
-                  
+
                   {/* Neural Interconnecting Vectors */}
                   <path
                     d="M50 42L24 35M50 42L76 35M50 42L50 68"
@@ -146,10 +146,10 @@ const HomePage = () => {
                 
               "
             >
-              Turning Evidence Into 
-                <br />
+              Turning Evidence Into
+              <br />
               Legal Insight
-              
+
               <span className="font-normal ml-4 font-serif text-[#C8A45D] bg-gradient-to-r from-[#DFBA73] via-[#C8A45D] to-[#A28242] bg-clip-text text-transparent">
                 NyayVivek
               </span>
@@ -174,7 +174,7 @@ const HomePage = () => {
 
             {/* Interactive Luxury CTAs */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-5 mt-10 w-full sm:w-auto">
-              
+
               {/* PRIMARY GOLD GLOW BUTTON */}
               <button
                 className="
@@ -230,7 +230,7 @@ const HomePage = () => {
       </div>
 
       {/* 4. Peripheral HUD Editorial Elements (Movie Poster feel) */}
-      <div 
+      <div
         className="fixed top-10 right-10 z-20 pointer-events-none text-right hidden md:block transition-opacity duration-300"
         style={{ opacity: contentOpacity }}
       >
@@ -238,11 +238,11 @@ const HomePage = () => {
           SYSTEM REGULATION
         </span>
         <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-1 block">
-          SECURE & ENCRYPTED 
+          SECURE & ENCRYPTED
         </span>
       </div>
 
-      <div 
+      <div
         className="fixed bottom-10 right-10 z-20 pointer-events-none text-right hidden md:flex items-center gap-4 transition-opacity duration-300"
         style={{ opacity: contentOpacity }}
       >
@@ -250,7 +250,7 @@ const HomePage = () => {
           <span className="text-[9px] uppercase tracking-[0.25em] text-zinc-500 font-medium block">
             SCROLL DOWN TO SCRUB
           </span>
-         
+
         </div>
         <div className="flex flex-col gap-1 items-center animate-bounce">
           <span className="w-1.5 h-1.5 rounded-full bg-[#C8A45D]" />
@@ -259,7 +259,7 @@ const HomePage = () => {
       </div>
 
       {/* Decorative Bottom Credits Strip (Cinematic Editorial Poster feel) */}
-      <div 
+      <div
         className="fixed bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none text-center transition-opacity duration-300 w-full px-10"
         style={{ opacity: Math.max(1 - scrollProgress * 2.5, 0) }}
       >

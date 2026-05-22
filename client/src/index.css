@@ -21,6 +21,10 @@
   --color-gold-950: #1b1103;
 }
 
+  ::selection {
+    background-color: #c5a059;
+    color: #000000;
+  }
 
 /* Base custom styles to support clean scroll sequence */
 html, body {
@@ -30,9 +34,9 @@ html, body {
   font-family: var(--font-sans);
 }
 
-h1, h2, h3, h4, h5, h6 {
+/* h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-}
+} */
 
 /* Custom scrollbar to keep layout premium */
 ::-webkit-scrollbar {
@@ -40,16 +44,17 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-track {
-  background: #030712;
+  /* background: #030712; */
+  background: #020202;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1f2937;
+  background: #2a251e;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #34d399;
+  background: #c5a059;
 }
 
 /* Lenis smooth scrolling standard styling rules */
