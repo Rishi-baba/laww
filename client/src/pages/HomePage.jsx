@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ScrollSequence from "../components/ScrollSequence";
 import CinematicOverlay from "../components/CinematicOverlay";
 import StatueHotspots from "../components/StatueHotspots";
 import Auth from "../components/Auth";
+import useAuthStore from "../store/useAuthStore";
 
 const HomePage = () => {
+  const navigate = useNavigate();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showAuth, setShowAuth] = useState(false);
 
@@ -200,7 +204,13 @@ const HomePage = () => {
                   pointer-events-auto
                   cursor-pointer
                 "
-                onClick={() => setShowAuth(true)}
+                onClick={() => {
+                  if (isAuthenticated) {
+                    navigate("/workspace");
+                  } else {
+                    setShowAuth(true);
+                  }
+                }}
               >
                 Get Started
               </button>
@@ -257,6 +267,23 @@ const HomePage = () => {
         className="fixed bottom-10 right-10 z-20 pointer-events-none text-right hidden md:flex items-center gap-4 transition-opacity duration-300"
         style={{ opacity: contentOpacity }}
       >
+        {/* Desktop Nav Links */}
+        <nav className="hidden md:flex items-center gap-6 text-[9px] font-mono tracking-[0.2em] text-zinc-400">
+          <a href="#synthesis" className="hover:text-white transition-colors">SYNTHESIS ENGINE</a>
+          <a href="#indexing" className="hover:text-white transition-colors">CASE RETRIEVAL</a>
+          <button 
+            onClick={() => navigate("/dashboard")}
+            className="hover:text-[#C8A45D] text-[9px] font-mono tracking-[0.2em] transition-colors cursor-pointer text-zinc-400 uppercase font-semibold pointer-events-auto"
+          >
+            DASHBOARD SUITE
+          </button>
+          <button 
+            onClick={() => navigate("/workspace")}
+            className="hover:text-[#C8A45D] text-[9px] font-mono tracking-[0.2em] transition-colors cursor-pointer text-zinc-400 uppercase font-semibold pointer-events-auto"
+          >
+            WORKSPACE COCKPIT
+          </button>
+        </nav>
         <div className="text-right">
           <span className="text-[9px] uppercase tracking-[0.25em] text-zinc-500 font-medium block">
             SCROLL DOWN TO SCRUB
