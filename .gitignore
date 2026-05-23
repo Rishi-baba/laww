@@ -36,11 +36,8 @@ __pycache__/
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Machine Learning indexing files & models (dynamic case embeddings)
-NyayVivek-ML/*.npy
-NyayVivek-ML/*.index
-*.npy
-*.index
+# Machine Learning indexing files are intentionally tracked so the Docker
+# build context includes them (case_embeddings.npy, legal_cases.index, temp1.xlsx).
 
 # Log files
 npm-debug.log*
