@@ -9,8 +9,9 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Railway auto-sets $PORT — uvicorn reads it at runtime
-startCommand = "uvicorn app:app --host 0.0.0.0 --port $PORT"
+# startCommand is intentionally omitted — the Dockerfile's shell-form CMD is used instead.
+# Railway's startCommand override runs in exec form which does NOT expand $PORT.
+# The Dockerfile CMD correctly uses shell form: uvicorn app:app --host 0.0.0.0 --port ${PORT:-8000}
 
 # Health check — Railway pings /health to confirm the service is live
 healthcheckPath = "/health"
