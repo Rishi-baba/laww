@@ -12,16 +12,31 @@ __pycache__/
 .pytest_cache/
 
 # Jupyter Notebook checkpoints
+*.ipynb
 .ipynb_checkpoints/
 
-# Environment files
+# Environment files — .env.example IS committed; actual .env is NOT
 .env
 .env.local
+.env.*.local
 
 # OS specific files
 .DS_Store
 Thumbs.db
 
-# HuggingFace & machine learning cache files
+# HuggingFace & Sentence-Transformers model download cache
 .huggingface/
 .model/
+sentence_transformers_cache/
+
+# Editor configs
+.vscode/
+.idea/
+
+# Docker build output (not needed in source control)
+dist/
+
+# NOTE: temp1.xlsx, case_embeddings.npy, legal_cases.index are intentionally
+# tracked by git so they are available inside the Docker build context.
+# If these files become too large, move them to a Railway volume and set
+# DATASET_PATH / EMBEDDINGS_PATH / FAISS_INDEX_PATH env vars instead.

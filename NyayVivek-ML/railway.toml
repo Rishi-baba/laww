@@ -1,0 +1,21 @@
+# ============================================================
+# railway.toml — Railway Deployment Configuration
+# ============================================================
+# Tells Railway to build using the Dockerfile in this repo
+# and configures health check and restart policies.
+
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Railway auto-sets $PORT — uvicorn reads it at runtime
+startCommand = "uvicorn app:app --host 0.0.0.0 --port $PORT"
+
+# Health check — Railway pings /health to confirm the service is live
+healthcheckPath = "/health"
+healthcheckTimeout = 120     # seconds to wait for startup (model loading takes time)
+
+# Restart policy on crash
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3

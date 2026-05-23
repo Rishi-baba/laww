@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from app.schemas import HealthCheckResponse
+from app.services.model_manager import ModelManager
 
 router = APIRouter(tags=["Health"])
 
@@ -7,6 +8,10 @@ router = APIRouter(tags=["Health"])
 def get_health():
     """
     Diagnostic endpoint to confirm ML service health and API responsiveness.
-    Used by Express backend, load balancers, or monitoring pipelines.
+    Returns model_loaded=true once SentenceTransformer + FAISS are fully cached.
+    Used by Railway health checks, Express backend, and monitoring pipelines.
     """
-    return HealthCheckResponse(status="ok")
+    manager = ModelManager()
+    return HealthCheckResponse(
+        status="ok" if manager._initialized else "loading"
+    )

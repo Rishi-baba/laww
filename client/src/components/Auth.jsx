@@ -103,7 +103,7 @@ const Auth = ({ setShowLogin }) => {
             </button>
 
             <h2 className="text-2xl font-serif font-bold text-center text-white mt-10 mb-3 tracking-wide">
-              Lawra Login
+              Login
             </h2>
 
             <p className="text-center text-gray-500 text-xs font-light mb-2 px-25">

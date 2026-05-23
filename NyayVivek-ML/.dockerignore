@@ -1,0 +1,41 @@
+# ============================================================
+# Docker Build Ignore — NyayVivek-ML
+# ============================================================
+# Exclude these from the Docker build context to keep images lean
+
+# Python virtual environment (Railway installs from requirements.txt)
+venv/
+.venv/
+env/
+
+# Python bytecode caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.cache/
+.pytest_cache/
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Git metadata
+.git/
+.gitignore
+
+# Environment files (injected by Railway via env vars, not files)
+.env
+.env.local
+.env.*.local
+
+# OS artefacts
+.DS_Store
+Thumbs.db
+
+# Legacy / scratch files not used by FastAPI app
+ml_model.py
+
+# Editor configs
+.vscode/
+.idea/
