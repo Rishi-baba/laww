@@ -7,20 +7,15 @@ import dossierRoutes from './routes/dossierRoute.js';
 const app = express();
 
 
-app.use(cors({
-  origin: (origin, callback) => {
-    const allowedOrigins = [
-      process.env.CLIENT_URL,
+app.use(
+  cors({
+    origin: [
       "http://localhost:5173",
-    ].filter(Boolean);
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"), false);
-    }
-  },
-  credentials: true,
-}));
+      "https://laww-flame.vercel.app",
+    ],
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(express.json());
 
