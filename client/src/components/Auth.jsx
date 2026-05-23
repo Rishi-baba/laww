@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import useAuthStore from "../store/useAuthStore";
+import { useToast } from "./ToastContext";
 
 const Auth = ({ setShowLogin }) => {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
+  const { showToast } = useToast();
   const [isRegistering, setIsRegistering] = useState(false);
 
   // LOGIN STATES
@@ -38,7 +40,7 @@ const Auth = ({ setShowLogin }) => {
 
       if (error.response) {
         console.log(error.response.data);
-        alert(error.response.data.message || "Invalid credentials. Please try again.");
+        showToast(error.response.data.message || "Invalid credentials. Please try again.", "error");
       } else {
         console.log("Server offline, redirecting to workspace via secure offline mode.");
         login({ email, name: "Advocate Counsel" });
@@ -53,7 +55,7 @@ const Auth = ({ setShowLogin }) => {
     e.preventDefault();
 
     if (registerPassword !== confirmPassword) {
-      alert("Passwords do not match");
+      showToast("Passwords do not match", "error");
       return;
     }
 
@@ -74,7 +76,7 @@ const Auth = ({ setShowLogin }) => {
 
       if (error.response) {
         console.log(error.response.data);
-        alert(error.response.data.message || "Registration failed. Please try again.");
+        showToast(error.response.data.message || "Registration failed. Please try again.", "error");
       } else {
         console.log("Server offline, redirecting to workspace via secure offline mode.");
         login({ email: registerEmail, name: name || "Advocate Counsel" });

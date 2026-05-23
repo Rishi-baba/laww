@@ -307,7 +307,7 @@ export const forgotPassword = async (req, res) => {
 
     // Reset URL
     const resetUrl =
-      `http://localhost:5173/reset-password/${resetToken}`;
+      `${process.env.CLIENT_URL || "http://localhost:5173"}/reset-password/${resetToken}`;
 
     // TEMP response instead of email
     res.status(200).json({

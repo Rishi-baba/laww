@@ -5,12 +5,14 @@ import CinematicOverlay from "../components/CinematicOverlay";
 import StatueHotspots from "../components/StatueHotspots";
 import Auth from "../components/Auth";
 import useAuthStore from "../store/useAuthStore";
+import { PreviewDemoModal } from "../components/PreviewDemoModal";
 
 const HomePage = () => {
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [showAuth, setShowAuth] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
 
   // Smooth scroll tracking to fade out/translate text elements as the user scrolls down
   useEffect(() => {
@@ -178,7 +180,7 @@ const HomePage = () => {
                 font-sans
               "
             >
-              An elite digital cockpit designed for advanced evidence synthesis, deep jurisdictional analysis, and predictive judicial insights. Designed to amplify precision.
+              An advanced AI-powered assistant for analyzing case documents, mapping connected evidence, and searching similar past legal judgments.
             </p>
 
             {/* Interactive Luxury CTAs */}
@@ -217,6 +219,7 @@ const HomePage = () => {
 
               {/* SECONDARY BACKDROP BLUR BUTTON */}
               <button
+                onClick={() => setShowDemo(true)}
                 className="
                   px-8
                   py-4.5
@@ -256,7 +259,7 @@ const HomePage = () => {
         style={{ opacity: contentOpacity }}
       >
         <span className="text-[9px] uppercase tracking-[0.3em] text-[#C8A45D] font-medium block">
-          SYSTEM REGULATION
+          AI ASSISTANT
         </span>
         <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mt-1 block">
           SECURE & ENCRYPTED
@@ -269,19 +272,19 @@ const HomePage = () => {
       >
         {/* Desktop Nav Links */}
         <nav className="hidden md:flex items-center gap-6 text-[9px] font-mono tracking-[0.2em] text-zinc-400">
-          <a href="#synthesis" className="hover:text-white transition-colors">SYNTHESIS ENGINE</a>
-          <a href="#indexing" className="hover:text-white transition-colors">CASE RETRIEVAL</a>
+          <a href="#synthesis" className="hover:text-white transition-colors">EVIDENCE MAP</a>
+          <a href="#indexing" className="hover:text-white transition-colors">SEARCH CASES</a>
           <button 
             onClick={() => navigate("/dashboard")}
             className="hover:text-[#C8A45D] text-[9px] font-mono tracking-[0.2em] transition-colors cursor-pointer text-zinc-400 uppercase font-semibold pointer-events-auto"
           >
-            DASHBOARD SUITE
+            DASHBOARD
           </button>
           <button 
             onClick={() => navigate("/workspace")}
             className="hover:text-[#C8A45D] text-[9px] font-mono tracking-[0.2em] transition-colors cursor-pointer text-zinc-400 uppercase font-semibold pointer-events-auto"
           >
-            WORKSPACE COCKPIT
+            WORKSPACE
           </button>
         </nav>
         <div className="text-right">
@@ -296,16 +299,20 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Decorative Bottom Credits Strip (Cinematic Editorial Poster feel) */}
-      <div
-        className="fixed bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none text-center transition-opacity duration-300 w-full px-10"
-        style={{ opacity: Math.max(1 - scrollProgress * 2.5, 0) }}
-      >
-        <span className="text-[8px] tracking-[0.35em] text-zinc-600 uppercase font-light">
-          NYAYVIVEK DEPLOYMENT CORP &copy; 2026 // ALL COGNITIONS REGISTERED // FOR JUDICIAL USE ONLY
-        </span>
-      </div>
 
+
+      <PreviewDemoModal
+        isOpen={showDemo}
+        onClose={() => setShowDemo(false)}
+        onGetStarted={() => {
+          setShowDemo(false);
+          if (isAuthenticated) {
+            navigate("/workspace");
+          } else {
+            setShowAuth(true);
+          }
+        }}
+      />
     </div>
   );
 };

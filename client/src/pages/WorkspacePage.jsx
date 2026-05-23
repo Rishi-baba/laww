@@ -1,18 +1,22 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import useAuthStore from "../store/useAuthStore";
+import { useToast } from "../components/ToastContext";
 
 const WorkspacePage = () => {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
+  const { showToast } = useToast();
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
 
-  // Staged files state, initialized empty
+  // Staged files metadata and actual File objects
   const [stagedFiles, setStagedFiles] = useState([]);
+  const [rawFiles, setRawFiles] = useState([]);
 
   // Form input states
   const [caseTitle, setCaseTitle] = useState("");
@@ -20,50 +24,89 @@ const WorkspacePage = () => {
   const [category, setCategory] = useState("Criminal Appeal (Homicide)");
   const [counselNotes, setCounselNotes] = useState("");
 
-  // UI state for mock analysis processing
+  // UI state for analysis pipeline
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [analysisStep, setAnalysisStep] = useState("");
 
   // Remove staged file
-  const removeFile = (id) => {
+  const removeFile = (id, name) => {
     setStagedFiles(prev => prev.filter(f => f.id !== id));
+    setRawFiles(prev => prev.filter(f => f.name !== name));
   };
 
-  // Mock processing wizard execution
-  const runNeuralInsights = () => {
+  // Real full-stack legal compile pipeline execution
+  const runNeuralInsights = async () => {
     setIsAnalyzing(true);
-    setAnalysisProgress(0);
-    setAnalysisStep("Initializing neural synthesis engines...");
+    setAnalysisProgress(5);
+    setAnalysisStep("1. Staging and Uploading PDF Briefs...");
 
-    const steps = [
-      { progress: 15, msg: "Aligning statutory context indexes..." },
-      { progress: 35, msg: "Scanning staged documents for jurisprudence precedents..." },
-      { progress: 55, msg: "Cross-referencing depositions with eyewitness timelines..." },
-      { progress: 75, msg: "Running contradiction and missing evidence detection..." },
-      { progress: 90, msg: "Mapping final logical evidence vectors..." },
-      { progress: 100, msg: "Insights synthesis complete." }
-    ];
+    // Create a timer to crawl through visual steps smoothly while request is active
+    let currentProgress = 5;
+    const progressInterval = setInterval(() => {
+      if (currentProgress < 20) {
+        currentProgress += 1;
+        setAnalysisStep("1. Staging and Uploading PDF Briefs...");
+      } else if (currentProgress < 40) {
+        currentProgress += 1;
+        setAnalysisStep("2. In-Memory Parsing & Automated OCR Heuristics...");
+      } else if (currentProgress < 60) {
+        currentProgress += 1;
+        setAnalysisStep("3. Running OCR on scanned briefs (English Tesseract)...");
+      } else if (currentProgress < 80) {
+        currentProgress += 1;
+        setAnalysisStep("4. Synthesizing deep semantic FAISS case analysis...");
+      } else if (currentProgress < 95) {
+        currentProgress += 0.5;
+        setAnalysisStep("5. Structuring & saving final litigation case file...");
+      }
+      setAnalysisProgress(Math.floor(currentProgress));
+    }, 150);
 
-    steps.forEach((step, idx) => {
-      setTimeout(() => {
-        setAnalysisProgress(step.progress);
-        setAnalysisStep(step.msg);
-        if (step.progress === 100) {
-          setTimeout(() => {
-            setIsAnalyzing(false);
-            navigate("/dashboard");
-          }, 1200);
+    const formData = new FormData();
+    formData.append("case_title", caseTitle);
+    formData.append("litigation_parties", caseTitle);
+    formData.append("court_jurisdiction", jurisdiction);
+    formData.append("case_classification", category);
+    formData.append("category", category);
+    formData.append("strategic_counselor_notes", counselNotes);
+
+    for (const file of rawFiles) {
+      formData.append("files", file);
+    }
+
+    try {
+      // Step 4 MERN axios trigger
+      const response = await axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:5000"}/api/dossiers/compile`, formData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data"
         }
-      }, (idx + 1) * 900);
-    });
+      });
+
+      clearInterval(progressInterval);
+      setAnalysisProgress(100);
+      setAnalysisStep("5. Analysis complete. Syncing dashboard...");
+
+      setTimeout(() => {
+        setIsAnalyzing(false);
+        // Force refresh / redirect to dashboard
+        navigate("/dashboard");
+      }, 1000);
+
+    } catch (error) {
+      clearInterval(progressInterval);
+      setIsAnalyzing(false);
+      console.error("Compilation error:", error);
+      showToast(`Case file compile failed: ${error.response?.data?.message || error.message}`, "error");
+    }
   };
 
   // Form submit handler
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (stagedFiles.length === 0) {
-      alert("Please stage at least one case document before executing neural insights.");
+    if (rawFiles.length === 0) {
+      showToast("Please stage at least one case document before executing neural insights.", "warning");
       return;
     }
     runNeuralInsights();
@@ -165,7 +208,7 @@ const WorkspacePage = () => {
             {/* Case Classification Category Dropdown */}
             <div className="flex flex-col gap-1.5 relative">
               <label className="block text-[9px] font-mono uppercase tracking-wider text-zinc-500 font-bold">
-                Case Classification Category
+                Case Category
               </label>
               <div className="relative">
                 <select
@@ -190,13 +233,13 @@ const WorkspacePage = () => {
             {/* Strategic Notes Textarea */}
             <div className="flex flex-col gap-1.5">
               <label className="block text-[9px] font-mono uppercase tracking-wider text-zinc-500 font-bold">
-                Strategic Counselor Notes (Optional)
+                Case Notes (Optional)
               </label>
               <textarea
                 rows={5}
                 value={counselNotes}
                 onChange={(e) => setCounselNotes(e.target.value)}
-                placeholder="Provide context regarding witness timelines, alibi assertions, digital assets, or general notes to compile into the neural summary..."
+                placeholder="Provide additional details such as witness statements, timeline facts, or general notes to include in the case analysis..."
                 className="w-full bg-black border border-zinc-900 text-white text-xs font-sans p-4 rounded focus:outline-none focus:border-[#C8A45D] focus:ring-1 focus:ring-[#C8A45D]/20 transition-all placeholder:text-zinc-700 font-light leading-relaxed resize-none"
               />
             </div>
@@ -215,11 +258,11 @@ const WorkspacePage = () => {
                   STEP 2 OF 2
                 </span>
                 <h2 className="text-3xl font-serif text-white tracking-tight">
-                  File Repository Uploads
+                  Upload Case Documents
                 </h2>
               </div>
               <span className="text-xs font-mono text-zinc-500 tracking-wider">
-                <span className="text-[#C8A45D] font-bold">{stagedFiles.length}</span> file(s) staging
+                <span className="text-[#C8A45D] font-bold">{stagedFiles.length}</span> file(s) selected
               </span>
             </div>
 
@@ -233,23 +276,41 @@ const WorkspacePage = () => {
                 </svg>
               </div>
               <p className="text-sm font-serif text-white mb-1">
-                Drag legal briefs here to upload
+                Drag PDF documents here to upload
               </p>
               <p className="text-zinc-600 text-[11px] leading-relaxed max-w-xs">
-                Supports TXT, CSV, PDF and XML formats. Stage your legal briefs to execute neural insights.
+                Supports standard PDF briefs. Upload multiple PDFs to run the AI analysis.
               </p>
-              <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" onChange={(e) => {
-                if (e.target.files?.length) {
-                  const file = e.target.files[0];
-                  setStagedFiles(prev => [
-                    {
-                      id: `upload-${Date.now()}`,
-                      name: file.name
-                    },
-                    ...prev
-                  ]);
-                }
-              }} />
+              <input 
+                type="file" 
+                multiple
+                accept=".pdf"
+                className="absolute inset-0 opacity-0 cursor-pointer" 
+                onChange={(e) => {
+                  if (e.target.files?.length) {
+                    const filesArray = Array.from(e.target.files);
+                    const pdfFiles = filesArray.filter(f => f.name.toLowerCase().endsWith('.pdf'));
+                    
+                    if (pdfFiles.length === 0) {
+                      showToast("Only standard PDF documents can be uploaded.", "error");
+                      return;
+                    }
+
+                    if (pdfFiles.length < filesArray.length) {
+                      showToast("Some non-PDF files were skipped. Only standard PDF documents can be uploaded.", "warning");
+                    }
+
+                    setRawFiles(prev => [...pdfFiles, ...prev]);
+                    setStagedFiles(prev => [
+                      ...pdfFiles.map((file, idx) => ({
+                        id: `upload-${Date.now()}-${idx}`,
+                        name: file.name
+                      })),
+                      ...prev
+                    ]);
+                  }
+                }} 
+              />
             </div>
 
             {/* Category selection selector */}
@@ -265,24 +326,24 @@ const WorkspacePage = () => {
                 stagedFiles.map((file) => (
                   <div
                     key={file.id}
-                    className="flex items-center justify-between bg-black/60 border border-zinc-900/60 p-4 rounded-xl hover:border-zinc-800 transition-all group duration-300"
+                    className="flex items-center justify-between bg-black/60 border border-zinc-900/60 p-4 rounded-xl hover:border-zinc-800 transition-all group duration-300 min-w-0 gap-4"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-zinc-950 flex items-center justify-center text-[#C8A45D] border border-zinc-900">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-zinc-950 flex items-center justify-center text-[#C8A45D] border border-zinc-900 shrink-0">
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
                         </svg>
                       </div>
-                      <div>
-                        <p className="text-xs text-white font-medium font-sans">
+                      <div className="min-w-0">
+                        <p className="text-xs text-white font-medium font-sans truncate" title={file.name}>
                           {file.name}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <div className="border border-green-950 bg-green-950/20 text-[9px] font-mono uppercase text-green-400 font-bold px-2.5 py-1 rounded flex items-center gap-1.5 shadow-[0_0_10px_rgba(34,197,94,0.15)] select-none">
-                        <svg className="w-3 h-3 text-green-400 stroke-2 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="flex items-center gap-3 shrink-0">
+                      <div className="border border-[#C8A45D]/30 bg-[#C8A45D]/5 text-[9px] font-mono uppercase text-[#C8A45D] font-semibold px-2.5 py-1 rounded flex items-center gap-1.5 shadow-[0_2px_8px_rgba(200,164,93,0.05)] select-none">
+                        <svg className="w-3 h-3 text-[#C8A45D] stroke-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         READY
@@ -290,7 +351,7 @@ const WorkspacePage = () => {
                       
                       {/* Delete button */}
                       <button
-                        onClick={() => removeFile(file.id)}
+                        onClick={() => removeFile(file.id, file.name)}
                         className="text-zinc-500 hover:text-red-400 p-1.5 transition-colors cursor-pointer rounded hover:bg-red-500/10"
                         title="Remove file"
                       >
@@ -310,7 +371,7 @@ const WorkspacePage = () => {
             form="case-context-form"
             className="mt-8 w-full border border-[#C8A45D]/30 bg-black text-[11px] font-mono text-[#C8A45D] hover:text-black hover:border-[#C8A45D] py-4 hover:bg-[#C8A45D] tracking-widest font-bold uppercase rounded transition-all duration-300 active:scale-[0.98] shadow-[0_0_20px_rgba(200,164,93,0.1)] hover:shadow-[0_0_35px_rgba(200,164,93,0.35)] cursor-pointer flex items-center justify-center gap-2"
           >
-            COMPILE & ANALYZE DOSSIER
+            COMPILE & ANALYZE CASE FILE
           </button>
         </section>
 
@@ -335,7 +396,7 @@ const WorkspacePage = () => {
             </div>
 
             <h3 className="text-lg font-serif text-white mb-2 tracking-wide">
-              Synthesizing Evidence Dossier
+              Synthesizing Evidence Case File
             </h3>
             
             {/* Live Progress State msg */}
