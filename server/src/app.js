@@ -7,8 +7,16 @@ import dossierRoutes from './routes/dossierRoute.js';
 const app = express();
 
 
+const allowedOrigins = [process.env.CLIENT_URL, "http://localhost:5173"].filter(Boolean);
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  origin: (origin, callback) => {
+    // Allow requests with no origin (e.g., Postman) or matching allowed list
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"), false);
+    }
+  },
   credentials: true,
 }));
 app.use(cookieParser());
