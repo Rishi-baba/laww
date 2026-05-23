@@ -7,10 +7,12 @@ import dossierRoutes from './routes/dossierRoute.js';
 const app = express();
 
 
-const allowedOrigins = [process.env.CLIENT_URL, "http://localhost:5173"].filter(Boolean);
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (e.g., Postman) or matching allowed list
+    const allowedOrigins = [
+      process.env.CLIENT_URL,
+      "http://localhost:5173",
+    ].filter(Boolean);
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
