@@ -33,4 +33,4 @@ EXPOSE 8000
 
 # --- Start Command ---
 # Uses shell form so $PORT is resolved at runtime from Railway's env
-CMD uvicorn app:app --host 0.0.0.0 --port ${PORT:-8000}
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
